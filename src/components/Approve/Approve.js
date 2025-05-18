@@ -2,29 +2,29 @@ import React, { useEffect, useState } from 'react';
 import './Approve.css';
 
 function Approve() {
-  const [pending, setPending] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/approvals')
+    fetch('http://localhost:5000/api/users')
       .then(res => res.json())
       .then(data => {
-        setPending(data);
+        setUsers(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
   const handleAction = (id, status) => {
-    fetch(`http://localhost:5000/api/approvals/${id}`, {
+    fetch(`http://localhost:5000/api/users/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
     })
       .then(res => res.json())
       .then(() => {
-        setPending(prev => prev.filter(item => item._id !== id));
+        setUsers(prev => prev.filter(user => user._id !== id));
         setActionMsg(`Successfully ${status === 'approved' ? 'approved' : 'rejected'}!`);
         setTimeout(() => setActionMsg(''), 2000);
       });
@@ -32,20 +32,20 @@ function Approve() {
 
   return (
     <div className="approve-container">
-      <h2>Pending Approvals</h2>
+      <h2>Pending User Approvals</h2>
       {loading && <div>Loading...</div>}
       {actionMsg && <div className="approve-msg">{actionMsg}</div>}
-      {!loading && pending.length === 0 && <div>No pending approvals.</div>}
+      {!loading && users.length === 0 && <div>No pending users.</div>}
       <ul className="approve-list">
-        {pending.map(item => (
-          <li key={item._id} className="approve-item">
+        {users.map(user => (
+          <li key={user._id} className="approve-item">
             <div>
-              <strong>{item.name}</strong> ({item.email})<br />
-              <span>{item.message}</span>
+              <strong>{user.name}</strong> ({user.email})<br />
+              <span>{user.message}</span>
             </div>
             <div className="approve-actions">
-              <button onClick={() => handleAction(item._id, 'approved')} className="approve-btn approve">Approve</button>
-              <button onClick={() => handleAction(item._id, 'rejected')} className="approve-btn reject">Reject</button>
+              <button onClick={() => handleAction(user._id, 'approved')} className="approve-btn approve">Approve</button>
+              <button onClick={() => handleAction(user._id, 'rejected')} className="approve-btn reject">Reject</button>
             </div>
           </li>
         ))}

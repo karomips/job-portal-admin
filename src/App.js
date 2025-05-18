@@ -6,7 +6,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/upload" replace />} />
+        <Route path="/" element={<Navigate to="/approve" replace />} />
         <Route path="/approve" element={<Approve />} />
       </Routes>
     </Router>
